@@ -171,4 +171,21 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
     mapView.showsUserLocation = (status == .AuthorizedAlways)
   }
   
+  
+  func regionWithGeotification(geotification: Geotification) -> CLCircularRegion {
+    // 1
+    // initialize the location of the geofence, the radius of the geofence,
+    // & an identifier that allows iOS to distinguish between geofences of a given app
+    // the rest of the properties is already contained within the Geotification model
+    let region = CLCircularRegion(center: geotification.coordinate, radius: geotification.radius, identifier: geotification.identifier)
+    
+    // 2 
+    // boolean properties: notifyOnEntry & notifyOnExit
+    // specifies when a device enters & leaves a geofence
+    //
+    region.notifyOnEntry = (geotification.eventType == .OnEntry)
+    region.notifyOnExit = region.notifyOnEntry
+    return region
+  }
+  
 }
