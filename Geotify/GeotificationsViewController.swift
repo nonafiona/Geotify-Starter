@@ -188,4 +188,31 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
     return region
   }
   
+  func startMonitoringGeotification(geotification: Geotification) {
+    
+    // 1 
+    // determines if the device has required hardware to support the monitoring of geofences
+    if !CLLocationManager.isMonitoringAvailableForClass(CLCircularRegion) {
+      
+      // if monitoring is not available: you bail out entirely & will alert user
+      // this will be displayed in an UIalertview
+      showSimpleAlertWithTitle("Error", message: "Geofencing is not supported on this device!", viewController: self)
+      return
+    }
+    
+    // 2
+    // location auth otherwise will show the geotification alerts/status ??? ye.
+    if CLLocationManager.authorizationStatus() != .AuthorizedAlways {
+      showSimpleAlertWithTitle("Warning", message: "Your geotification is saved but will only be activated once you grant Geotify permission to access the device location.", viewController: self)
+    }
+    
+    // 3 
+    // created CLCircularRegion instance that was previously defined in the helper method
+    let region = regionWithGeotification(geotification)
+    
+    // 4 
+    // register the CLCircularRegion with Core Location for monitoring
+    locationManager.startMonitoringForRegion(region)
+  }
+  
 }
