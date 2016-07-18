@@ -85,6 +85,7 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
   func updateGeotificationsCount() {
     
     title = "Geotifications (\(geotifications.count))"
+    // disables add button after 20 geotifications have been created.... 
     navigationItem.rightBarButtonItem?.enabled = (geotifications.count < 20)
   }
 
