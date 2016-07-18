@@ -90,9 +90,20 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
 
   func addGeotificationViewController(controller: AddGeotificationViewController, didAddCoordinate coordinate: CLLocationCoordinate2D, radius: Double, identifier: String, note: String, eventType: EventType) {
     controller.dismissViewControllerAnimated(true, completion: nil)
+    
+    // 1
+    // ensures the max meters that can be assigned to a geofence
+    // any value that exceeds this will cause the monitoring to fail
+    let clampedRadius = (radius > locationManager.maximumRegionMonitoringDistance) ? locationManager.maximumRegionMonitoringDistance : radius
+    
     // Add geotification
     let geotification = Geotification(coordinate: coordinate, radius: radius, identifier: identifier, note: note, eventType: eventType)
     addGeotification(geotification)
+    
+    // 2 
+    // ensures the geofence to be associated with the newly-added geotification & is registered with Core Location for monitoring
+    startMonitoringGeotification(geotification)
+    
     saveAllGeotifications()
   }
 
@@ -232,5 +243,7 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
       }
     }
   }
+  
+  
   
 }
