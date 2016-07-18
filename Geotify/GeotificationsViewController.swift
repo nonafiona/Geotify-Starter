@@ -188,6 +188,11 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
     return region
   }
   
+  
+   // *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *
+  // START & STOP Monitoring Geotification functions
+  // *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *
+  
   func startMonitoringGeotification(geotification: Geotification) {
     
     // 1 
@@ -213,6 +218,19 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
     // 4 
     // register the CLCircularRegion with Core Location for monitoring
     locationManager.startMonitoringForRegion(region)
+  }
+  
+  
+  // simply tells the locationManager to stop monitoring the CLCircularRegion associated with the given geotification
+  
+  func stopMonitoringGeotification(geotification: Geotification) {
+    for region in locationManager.monitoredRegions {
+      if let circularRegion = region as? CLCircularRegion {
+        if circularRegion.identifier == geotification.identifier {
+          locationManager.stopMonitoringForRegion(circularRegion)
+        }
+      }
+    }
   }
   
 }
