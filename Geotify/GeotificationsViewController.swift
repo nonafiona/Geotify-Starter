@@ -83,7 +83,9 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
   }
 
   func updateGeotificationsCount() {
+    
     title = "Geotifications (\(geotifications.count))"
+    navigationItem.rightBarButtonItem?.enabled = (geotifications.count < 20)
   }
 
   // MARK: AddGeotificationViewControllerDelegate
