@@ -52,8 +52,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   // *  *   *   *   *   *   *    *   *
-  // * ENTER & EXIT Region Methods  * 
-  // *  *   *  *  *   *   *  *   * *
+  // * ENTER & EXIT Region Methods   *
+  // *  *   *  *  *   *   *   *   *  *
   
   
   func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
@@ -67,5 +67,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       handleRegionEvent(region)
     }
   }
+  
+  // checks & retrieves a note associated with the geotification
+  
+  func noteFromRegionIdentifier(identifier: String) -> String? {
+    if let savedItems = NSUserDefaults.standardUserDefaults().arrayForKey(kSavedItemsKey) {
+      // compares the identifier with the input identifier
+      // fetches & unstores the unarchived geotifications
+      for savedItem in savedItems {
+        if let geotification = NSKeyedUnarchiver.unarchiveObjectWithData(savedItem as! NSData) as? Geotification{
+          if geotification.identifier == identifier {
+            // once the method finds the geotification, it returns the accompanied note
+            return geotification.note
+          }
+        }
+      }
+    }
+    return nil
+  }
+  
 }
 
