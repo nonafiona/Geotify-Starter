@@ -24,7 +24,7 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
     super.viewDidLoad()
     
     // 1
-    locationManager.delegate = self
+    //locationManager.delegate = self
     // 2
     locationManager.requestAlwaysAuthorization()
     // 3
@@ -85,7 +85,7 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
   func updateGeotificationsCount() {
     
     title = "Geotifications (\(geotifications.count))"
-    // disables add button after 20 geotifications have been created.... 
+    // disables add button after 20 geotifications have been created....
     navigationItem.rightBarButtonItem?.enabled = (geotifications.count < 20)
   }
 
@@ -142,11 +142,13 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
       circleRenderer.fillColor = UIColor.purpleColor().colorWithAlphaComponent(0.4)
       return circleRenderer
     }
+    return nil
   }
 
-  func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+  func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
     // Delete geotification
     let geotification = view.annotation as! Geotification
+    stopMonitoringGeotification(geotification)
     removeGeotification(geotification)
     saveAllGeotifications()
   }
@@ -203,9 +205,9 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
   }
   
   
-   // *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *
-  // START & STOP Monitoring Geotification functions
-  // *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *
+   // *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *
+  // * START & STOP Monitoring Geotification functions *
+  // *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *
   
   func startMonitoringGeotification(geotification: Geotification) {
     
@@ -242,9 +244,25 @@ class GeotificationsViewController: UIViewController, AddGeotificationsViewContr
       if let circularRegion = region as? CLCircularRegion {
         if circularRegion.identifier == geotification.identifier {
           locationManager.stopMonitoringForRegion(circularRegion)
+          
+          // remove & save geotifications
+          removeGeotification(geotification)
+          saveAllGeotifications()
         }
       }
     }
+  }
+  
+  // Reacting to Geofence Events
+  
+  // these methods basically log any errors that the location manager ecounters to facilate with the debugging process
+  
+  func locationManager(manager: CLLocationManager!, monitoringDidFailForRegion region: CLRegion!, withError error: NSError!) {
+    print("Monitoring failed for region with identifier: \(region.identifier)")
+  }
+  
+  func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!){
+    print("Location Manager failed with the following error: \(error)")
   }
   
   
