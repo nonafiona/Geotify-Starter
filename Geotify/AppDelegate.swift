@@ -23,6 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     locationManager.requestAlwaysAuthorization()
     
     return true
+    
+    application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: .Sound | .Alert | .Badge, categories: nil))
+    UIApplication.sharedApplication().cancelAllLocalNotifications()
   }
 
   func applicationWillResignActive(application: UIApplication) {
@@ -48,7 +51,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   func handleRegionEvent(region: CLRegion!) {
-    print("Geofence triggered")
+    // Show an alert if application is active
+    if UIApplication.sharedApplication().applicationState == .Active {
+      if let message = noteFromRegionIdentifier(region.identifier){
+        if let viewController = window?.rootViewController {
+          showSimpleAlertWithTitle(nil, message: message, viewController: viewController)
+        }
+      }
+    } else {
+      // otherwise present a local notification
+      var notification = UIApplication()
+      notification.alertBody = notefromRegionIdentifier(region.identifier)
+      notification.soundName = "Default";
+      UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+    }
   }
   
   // *  *   *   *   *   *   *    *   *
@@ -68,6 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
   }
   
+  // this might need to be outside the class ( if you come across a couple bugs later on... )
   // checks & retrieves a note associated with the geotification
   
   func noteFromRegionIdentifier(identifier: String) -> String? {
